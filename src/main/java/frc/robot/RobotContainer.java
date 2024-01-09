@@ -4,35 +4,35 @@
 
 package frc.robot;
 
+import frc.constants.Constants.OperatorConstants;
+import frc.constants.Constants.ShuffleboardConstants;
 import frc.robot.commands.Autos;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public CommandXboxController driverController = new CommandXboxController(OperatorConstants.driverControllerPort);
+
+  public SendableChooser<Command> autoChooser = new SendableChooser<>();
+
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
+
+    autoChooser.addOption("nothing", new InstantCommand());
+    autoChooser.addOption("say hi", new PrintCommand("hi world"));
+
+    var driveTab = Shuffleboard.getTab(ShuffleboardConstants.driveTab);
+
+    driveTab.add("auto selection", autoChooser).withSize(4, 1);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
 
   }
@@ -43,7 +43,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return new WaitCommand(15);
+    return autoChooser.getSelected();
   }
 }
