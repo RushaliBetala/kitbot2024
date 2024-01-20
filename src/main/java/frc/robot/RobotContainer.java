@@ -7,6 +7,9 @@ package frc.robot;
 import frc.constants.Constants.OperatorConstants;
 import frc.constants.Constants.ShuffleboardConstants;
 import frc.robot.commands.Autos;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,12 +23,12 @@ public class RobotContainer {
 
   public CommandXboxController driverController = new CommandXboxController(OperatorConstants.driverControllerPort);
 
-  public SendableChooser<Command> autoChooser = new SendableChooser<>();
+  public LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("autoChooser");
 
   public RobotContainer() {
     configureBindings();
 
-    autoChooser.addOption("nothing", new InstantCommand());
+    autoChooser.addDefaultOption("nothing", new InstantCommand());
     autoChooser.addOption("say hi", new PrintCommand("hi world"));
 
     var driveTab = Shuffleboard.getTab(ShuffleboardConstants.driveTab);
@@ -43,6 +46,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return autoChooser.get();
   }
 }
